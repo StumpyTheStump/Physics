@@ -212,6 +212,8 @@ bool PhysicsScene::Rect2Line(PhysicsObject * obj1, PhysicsObject * obj2)
 
 		float max1Distance = glm::dot(max1, line1->getNormal()) - line1->getDistance();
 		float min1Distance = glm::dot(min1, line1->getNormal()) - line1->getDistance();
+		float revmax1Distance = glm::dot(-revmax1, line1->getNormal()) - line1->getDistance();
+		float revmin1Distance = glm::dot(-revmin1, line1->getNormal()) - line1->getDistance();
 
 		if (min1Distance < 0)
 		{
