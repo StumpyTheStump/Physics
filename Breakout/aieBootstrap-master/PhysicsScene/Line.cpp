@@ -1,7 +1,7 @@
 #include "Line.h"
 #include <Gizmos.h>
 
-Line::Line(glm::vec2 normal, float distance, glm::vec4 colour) : PhysicsObject::PhysicsObject(ShapeType::LINE)
+Line::Line(glm::vec2 normal, float distance, glm::vec4 colour) : PhysicsObject::PhysicsObject(ShapeType::LINE) 
 {
 	m_normal = glm::normalize(normal);
 	m_distanceToOrigin = distance;
@@ -34,4 +34,17 @@ void Line::makeGizmo()
 void Line::resetPosition()
 {
 	return;
+}
+
+void Line::resolveCollision(RigidBody * actor2)
+{
+	glm::vec2 normal = m_normal;
+	glm::vec2 relativeVelocity = actor2->getVelocity();
+
+	float elasticity = actor2->getElasticity();
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / glm::dot(normal, normal* ((1.0f / actor2->getMass())));
+
+	glm::vec2 force = normal * j;
+
+	actor2->applyForce( force);
 }

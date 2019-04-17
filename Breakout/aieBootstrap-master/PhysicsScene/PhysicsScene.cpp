@@ -81,15 +81,7 @@ bool PhysicsScene::Line2Line(PhysicsObject * obj1, PhysicsObject * obj2)
 
 bool PhysicsScene::Line2Circle(PhysicsObject *obj1, PhysicsObject * obj2)
 {
-	Line *line1 = dynamic_cast<Line*>(obj1);
-	Circle *circle1 = dynamic_cast<Circle*>(obj2);
-
-
-	if (line1 != nullptr && circle1 != nullptr)
-	{
-		return true;
-	}
-	return false;
+	return Circle2Line(obj1, obj2);
 }
 
 bool PhysicsScene::Line2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
@@ -105,12 +97,12 @@ bool PhysicsScene::Circle2Line(PhysicsObject * obj1, PhysicsObject * obj2)
 	if (circle != nullptr && line != nullptr)
 	{
 		glm::vec2 collisionNormal = line->getNormal();
-		float circleToLine = glm::dot(circle->getPosition(), line->getNormal()) - line->getDistance();
+		float circleToLine = glm::dot(circle->getPosition(), collisionNormal) - line->getDistance();
 		
 		float intersection = circle->getRadius() - circleToLine;
 		if (intersection > 0)
 		{
-			circle->setVelocity(glm::vec2(0, 1));
+			line->resolveCollision(circle);
 			return true; // resolve collision for plane
 		}
 		
@@ -133,8 +125,7 @@ bool PhysicsScene::Circle2Circle(PhysicsObject * obj1, PhysicsObject * obj2)
 		float overlap = radialSum - length;
 		if (length <= (radialSum))
 		{
-			circle1->setVelocity(glm::vec2(0, 0));
-			circle2->setVelocity(glm::vec2(0, 0));
+			circle1->resolveCollision(circle2);
 			circle1->setPosition(circle1->getPosition() + (overlap * collisionNormal));
 			circle2->setPosition(circle2->getPosition() - (overlap * collisionNormal));
 
@@ -152,6 +143,20 @@ bool PhysicsScene::Circle2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 
 	if (circle1 != nullptr && rect1 != nullptr)
 	{
+		glm::vec2 max1 = rect1->getPosition() + (rect1->getSize());
+		glm::vec2 min1 = rect1->getPosition() - (rect1->getSize());
+		glm::vec2 revmax1 = rect1->getPosition() + (-rect1->getSize().x, rect1->getSize().y);
+		glm::vec2 revmin1 = rect1->getPosition() - (-rect1->getSize().x, rect1->getSize().y);
+
+		glm::vec2 checkCollison = glm::clamp(circle1->getPosition(), min1, max1);
+		glm::vec2 displacement = checkCollison - circle1->getPosition();
+		float length = glm::length(displacement);
+
+		if (length < circle1->getRadius())
+		{
+			circle1->resolveCollision(rect1);
+			
+		}
 		return true;
 	}
 	return false;
@@ -159,15 +164,7 @@ bool PhysicsScene::Circle2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 
 bool PhysicsScene::Rect2Circle(PhysicsObject * obj1, PhysicsObject * obj2)
 {
-	Rectangle *rect1 = dynamic_cast<Rectangle*>(obj1);
-	Circle *circle1 = dynamic_cast<Circle*>(obj2);
-	
-
-	if (circle1 != nullptr && rect1 != nullptr)
-	{
-		return true;
-	}
-	return false;
+	return Circle2Rect(obj1, obj2);
 }
 
 bool PhysicsScene::Rect2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
@@ -175,10 +172,10 @@ bool PhysicsScene::Rect2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 	Rectangle *rect1 = dynamic_cast<Rectangle*>(obj1);
 	Rectangle *rect2 = dynamic_cast<Rectangle*>(obj2);
 
-	glm::vec2 max1 = rect1->getPosition() + (0.5f * rect1->getSize());
-	glm::vec2 max2 = rect2->getPosition() + (0.5f * rect2->getSize());
-	glm::vec2 min1 = rect1->getPosition() - (0.5f * rect1->getSize());
-	glm::vec2 min2 = rect2->getPosition() - (0.5f * rect2->getSize());
+	glm::vec2 max1 = rect1->getPosition() + (rect1->getSize());
+	glm::vec2 max2 = rect2->getPosition() + (rect2->getSize());
+	glm::vec2 min1 = rect1->getPosition() - (rect1->getSize());
+	glm::vec2 min2 = rect2->getPosition() - (rect2->getSize());
 
 	if (rect1 != nullptr && rect2 != nullptr)
 	{
@@ -188,8 +185,7 @@ bool PhysicsScene::Rect2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 		}
 		else 
 		{
-			rect1->setVelocity(glm::vec2(0, 0));
-			rect2->setVelocity(glm::vec2(0, 0));
+			rect1->resolveCollision(rect2);;
 			return true;
 		}
 		
@@ -205,19 +201,35 @@ bool PhysicsScene::Rect2Line(PhysicsObject * obj1, PhysicsObject * obj2)
 
 	if (rect1 != nullptr && line1 != nullptr)
 	{
-		glm::vec2 max1 = rect1->getPosition() + (0.5f * rect1->getSize());
-		glm::vec2 min1 = rect1->getPosition() - (0.5f * rect1->getSize());
-		glm::vec2 revmax1 = rect1->getPosition() + (0.5f * rect1->getSize());
-		glm::vec2 revmin1 = rect1->getPosition() - (0.5f * rect1->getSize());
+		glm::vec2 max1 = rect1->getPosition() + ( rect1->getSize());
+		glm::vec2 min1 = rect1->getPosition() - ( rect1->getSize());
+		glm::vec2 revmax1 = rect1->getPosition() + (-rect1->getSize().x, rect1->getSize().y);
+		glm::vec2 revmin1 = rect1->getPosition() - (-rect1->getSize().x, rect1->getSize().y);
 
 		float max1Distance = glm::dot(max1, line1->getNormal()) - line1->getDistance();
 		float min1Distance = glm::dot(min1, line1->getNormal()) - line1->getDistance();
-		float revmax1Distance = glm::dot(-revmax1, line1->getNormal()) - line1->getDistance();
-		float revmin1Distance = glm::dot(-revmin1, line1->getNormal()) - line1->getDistance();
+		float revmax1Distance = glm::dot(revmax1, line1->getNormal()) - line1->getDistance();
+		float revmin1Distance = glm::dot(revmin1, line1->getNormal()) - line1->getDistance();
+
 
 		if (min1Distance < 0)
 		{
-			rect1->setVelocity(glm::vec2(0, 0));
+			line1->resolveCollision(rect1);
+			return true; // resolve collision for plane
+		}
+		if (max1Distance < 0)
+		{
+			line1->resolveCollision(rect1);
+			return true; // resolve collision for plane
+		}
+		if (revmin1Distance < 0)
+		{
+			line1->resolveCollision(rect1);
+			return true; // resolve collision for plane
+		}
+		if (revmax1Distance < 0)
+		{
+			line1->resolveCollision(rect1);
 			return true; // resolve collision for plane
 		}
 

@@ -27,7 +27,7 @@ public:
 protected:
 	glm::vec2 m_position;
 	glm::vec2 m_velocity;
-	float m_elasticity;
+	float m_elasticity = 1;
 	float m_mass;
 	float m_rotation; // single float for 2D
 };

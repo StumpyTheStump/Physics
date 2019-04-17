@@ -47,26 +47,33 @@ bool PhysicsSceneApp::startup() {
 
 		
 
-	//Circle* circle1 = new Circle(glm::vec2(4, -20), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	//Circle* circle2 = new Circle(glm::vec2(0, 10), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 0, 1, 1));
+	Circle* circle1 = new Circle(glm::vec2(-20, 10), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* circle2 = new Circle(glm::vec2(-20, 30), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 0, 1, 1));
+	Circle* circle3 = new Circle(glm::vec2(-40, 30), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 0, 1, 1));
+
 	Line* line1 = new Line(glm::vec2(0, 1), -50.0f, glm::vec4(1, 1, 1, 1));
 	Line* line2 = new Line(glm::vec2(1, 0), -70.0f, glm::vec4(1, 1, 1, 1));
 	Line* line3 = new Line(glm::vec2(-1, 0), -50.0f, glm::vec4(1, 1, 1, 1));
 	Line* line4 = new Line(glm::vec2(0,-1), -50.0f, glm::vec4(1, 1, 1, 1));
-	Rectangle* rect1 = new Rectangle(glm::vec2(0, 10), glm::vec2(0, 0), 4.0f, glm::vec2(1, 1), glm::vec4(0, 0, 1, 1));
-	Rectangle* rect2 = new Rectangle(glm::vec2(0, 30), glm::vec2(0, 0), 4.0f, glm::vec2(1, 1), glm::vec4(0, 0, 1, 1));
+
+	Rectangle* rect1 = new Rectangle(glm::vec2(0, 10), glm::vec2(0, 0), 4.0f, glm::vec2(5, 5), glm::vec4(1, 0, 0, 1));
+	Rectangle* rect2 = new Rectangle(glm::vec2(0, 30), glm::vec2(0, 0), 4.0f, glm::vec2(5, 5), glm::vec4(0, 0, 1, 1));
+	Rectangle* rect3 = new Rectangle(glm::vec2(-40, 10), glm::vec2(0, 0), 4.0f, glm::vec2(5, 5), glm::vec4(1, 0, 0, 1));
 
 
 
 
-	//m_physicsScene->addActor(circle1);
-	//m_physicsScene->addActor(circle2);
+	m_physicsScene->addActor(circle1);
+	m_physicsScene->addActor(circle2);
+	m_physicsScene->addActor(circle3);
 	m_physicsScene->addActor(line1);
 	m_physicsScene->addActor(line2);
 	m_physicsScene->addActor(line3);
 	m_physicsScene->addActor(line4);
 	m_physicsScene->addActor(rect1);
 	m_physicsScene->addActor(rect2);
+	m_physicsScene->addActor(rect3);
+
 
 	//circle1->applyForce(glm::vec2(0, 0));
 	//circle2->applyForce(glm::vec2(0, 0));
