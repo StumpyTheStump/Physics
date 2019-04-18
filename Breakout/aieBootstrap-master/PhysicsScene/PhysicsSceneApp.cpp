@@ -28,7 +28,7 @@ bool PhysicsSceneApp::startup() {
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->setGravity(glm::vec2(0, -10));
+	m_physicsScene->setGravity(glm::vec2(0, -9.8f));
 	m_physicsScene->setTimeStep(0.01f);
 
 	//glm::vec2 startPos(-60, -40);
@@ -47,7 +47,7 @@ bool PhysicsSceneApp::startup() {
 
 		
 
-	Circle* circle1 = new Circle(glm::vec2(-20, 10), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* circle1 = new Circle(glm::vec2(-25, 10), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
 	Circle* circle2 = new Circle(glm::vec2(-20, 30), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 0, 1, 1));
 	Circle* circle3 = new Circle(glm::vec2(-40, 30), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 0, 1, 1));
 
