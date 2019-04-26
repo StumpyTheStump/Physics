@@ -190,10 +190,9 @@ bool PhysicsScene::Rect2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 	glm::vec2 min1 = rect1->getPosition() - (rect1->getSize());
 	glm::vec2 min2 = rect2->getPosition() - (rect2->getSize());
 
-	glm::vec2 checkCollison = glm::clamp(rect1->getPosition(), min1, max1);
-	glm::vec2 displacement = checkCollison - rect1->getPosition();
+	float xOverlap = glm::min(max1.x - min2.x, max2.x - min1.x);
+	float yOverlap = glm::min(max1.y - min2.y, max2.y - min1.y);
 
-	float length = glm::length(displacement);
 
 	if (rect1 != nullptr && rect2 != nullptr)
 	{
@@ -204,11 +203,19 @@ bool PhysicsScene::Rect2Rect(PhysicsObject * obj1, PhysicsObject * obj2)
 		else 
 		{
 
-
+			if (xOverlap < yOverlap)
+			{
+				rect1->setPosition(rect1->getPosition() + 0.5f * xOverlap * glm::vec2(1, 0));
+				rect2->setPosition(rect2->getPosition() - 0.5f * xOverlap * glm::vec2(1, 0));
+			}
+			else
+			{
+				rect1->setPosition(rect1->getPosition() - 0.5f * yOverlap * glm::vec2(0, 1));
+				rect2->setPosition(rect2->getPosition() + 0.5f * yOverlap * glm::vec2(0, 1));
+			}
 			
-			rect1->setPosition(rect1->getPosition());
-			rect2->setPosition(rect2->getPosition());
-			rect1->resolveCollision(rect2);;
+			
+			rect1->resolveCollision(rect2);
 			return true;
 		}
 		
